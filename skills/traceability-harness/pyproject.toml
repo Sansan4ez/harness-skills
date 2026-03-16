@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "traceability-harness-skill"
+version = "1.0.0"
+description = "Standalone traceability harness runtime for OpenAPI and requirement enforcement"
+requires-python = ">=3.10, <3.14"
+dependencies = [
+    "jsonschema>=4.23.0",
+    "pyyaml>=6.0.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
+
+[tool.uv]
+package = false

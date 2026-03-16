@@ -1,0 +1,118 @@
+name: Harness Observability Smoke
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  release:
+    types: [published]
+
+concurrency:
+  group: harness-observability-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  load-baseline:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_label: ${{ steps.context.outputs.pr_label }}
+      stack_compose_args: ${{ steps.context.outputs.stack_compose_args }}
+      app_compose_args: ${{ steps.context.outputs.app_compose_args }}
+      artifacts_dir: ${{ steps.context.outputs.artifacts_dir }}
+      required_on: ${{ steps.context.outputs.required_on }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout harness skills
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.HARNESS_SKILLS_REPOSITORY }}
+          ref: ${{ vars.HARNESS_SKILLS_REF }}
+          path: .skills/harness
+          token: ${{ secrets.HARNESS_SKILLS_REPO_TOKEN || github.token }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install observability-harness runtime
+        working-directory: .skills/harness/skills/observability-harness
+        run: uv sync
+
+      - name: Load observability baseline context
+        id: context
+        working-directory: .skills/harness/skills/observability-harness
+        run: uv run python scripts/harness/observability/ci.py --repo-root "$GITHUB_WORKSPACE" --github-output "$GITHUB_OUTPUT"
+
+  smoke:
+    needs: load-baseline
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && contains(needs.load-baseline.outputs.required_on, 'release')) || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, needs.load-baseline.outputs.pr_label))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout harness skills
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.HARNESS_SKILLS_REPOSITORY }}
+          ref: ${{ vars.HARNESS_SKILLS_REF }}
+          path: .skills/harness
+          token: ${{ secrets.HARNESS_SKILLS_REPO_TOKEN || github.token }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install observability-harness runtime
+        working-directory: .skills/harness/skills/observability-harness
+        run: uv sync
+
+      - name: Harness observability config check
+        working-directory: .skills/harness/skills/observability-harness
+        run: uv run python scripts/harness/harness.py --repo-root "$GITHUB_WORKSPACE" --mode check --module observability
+
+      - name: Observability harness verify
+        working-directory: .skills/harness/skills/observability-harness
+        run: uv run python scripts/harness/observability/verify.py --repo-root "$GITHUB_WORKSPACE"
+
+      - name: Generated observability docs check
+        working-directory: .skills/harness/skills/observability-harness
+        run: uv run python scripts/harness/observability/generate_all.py --repo-root "$GITHUB_WORKSPACE" --check
+
+      - name: Start observability stack
+        run: docker compose ${{ needs.load-baseline.outputs.stack_compose_args }} up -d
+
+      - name: Start application stack
+        run: docker compose ${{ needs.load-baseline.outputs.app_compose_args }} up -d
+
+      - name: Run multi-service smoke orchestration
+        working-directory: .skills/harness/skills/observability-harness
+        run: |
+          mkdir -p "${{ needs.load-baseline.outputs.artifacts_dir }}"
+          set -o pipefail
+          uv run python scripts/harness/observability/smoke.py --repo-root "$GITHUB_WORKSPACE" --artifacts-dir "${{ needs.load-baseline.outputs.artifacts_dir }}" --output-format json | tee "${{ github.workspace }}/${{ needs.load-baseline.outputs.artifacts_dir }}/summary.json"
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: observability-smoke
+          path: ${{ github.workspace }}/${{ needs.load-baseline.outputs.artifacts_dir }}/
+          if-no-files-found: warn
+
+      - name: Tear down stacks
+        if: always()
+        run: |
+          docker compose ${{ needs.load-baseline.outputs.app_compose_args }} down -v
+          docker compose ${{ needs.load-baseline.outputs.stack_compose_args }} down -v

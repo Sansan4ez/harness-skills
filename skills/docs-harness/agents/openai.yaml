@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docs Harness"
+  short_description: "Bootstrap and validate docs baselines"
+  default_prompt: "Use $docs-harness to bootstrap, update, or verify the documentation baseline for this repository."

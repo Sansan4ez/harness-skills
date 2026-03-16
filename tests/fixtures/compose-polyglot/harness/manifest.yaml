@@ -1,0 +1,19 @@
+version: 1
+services:
+  - id: edge-api
+    kind: fastapi
+    path: apps/edge-api
+    compose_service: edge-api
+    openapi: specs/edge-api/openapi.yaml
+    otel_service_name: edge-api
+    health_url: http://localhost:8080/healthz
+  - id: scheduler
+    kind: worker
+    path: workers/scheduler
+    compose_service: scheduler
+    otel_service_name: scheduler
+  - id: admin-ui
+    kind: service
+    path: packages/admin-ui
+    compose_service: admin-ui
+    otel_service_name: admin-ui

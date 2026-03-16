@@ -1,0 +1,67 @@
+version: 1
+resource_attributes:
+  required:
+    - service.name
+signal_kinds:
+  required:
+    - traces
+    - metrics
+    - logs
+correlation:
+  required_log_fields:
+    - trace_id
+    - span_id
+    - request_id
+
+catalog:
+  - name: http_server_duration_milliseconds
+    kind: metric
+    service: edge-api
+    emitter:
+      path: apps/edge-api/app.py
+      description: Request metrics exported by the edge API service.
+    consumers:
+      - kind: dashboard
+        ref: HTTP Throughput
+      - kind: dashboard
+        ref: HTTP 5xx Ratio
+      - kind: alert
+        ref: OBS-ALERT-001
+      - kind: smoke
+        ref: victoriametrics/smoke_test.sh
+    coverage_paths:
+      - apps/edge-api/app.py
+      - victoriametrics/alerts/minimum-alerts.yaml
+      - victoriametrics/alerts/vmalert-rules.yaml
+      - path: victoriametrics/grafana/provisioning/dashboards/files/harness-service-overview.json
+        contains:
+          - HTTP Throughput
+          - HTTP 5xx Ratio
+      - victoriametrics/smoke_test.sh
+  - name: HTTP request completed
+    kind: log
+    service: edge-api
+    emitter:
+      path: apps/edge-api/app.py
+      description: Structured completion log for edge API requests.
+    consumers:
+      - kind: smoke
+        ref: victoriametrics/smoke_test.sh
+      - kind: runbook
+        ref: docs/operations/observability-runbook.md
+    coverage_paths:
+      - apps/edge-api/app.py
+      - victoriametrics/smoke_test.sh
+  - name: api.request
+    kind: trace
+    service: edge-api
+    emitter:
+      path: apps/edge-api/app.py
+      description: Top-level request trace span for the edge API.
+    consumers:
+      - kind: runbook
+        ref: docs/operations/observability-runbook.md
+      - kind: policy
+        ref: docs/operations/observability-policy.md
+    coverage_paths:
+      - apps/edge-api/app.py

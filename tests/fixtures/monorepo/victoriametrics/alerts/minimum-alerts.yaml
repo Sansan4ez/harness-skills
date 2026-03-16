@@ -1,0 +1,23 @@
+alerts:
+  - id: OBS-ALERT-001
+    execution: vmalert
+    alert_name: ApiTelemetrySilence
+    title: API telemetry silence
+    severity: critical
+    datasource: VictoriaMetrics
+    expr: sum(rate(http_server_duration_milliseconds_count{service_name="api"}[10m])) < 0.001
+    for: 10m
+    summary: The API service stopped exporting request metrics.
+    impact: Health may still pass while telemetry export is broken.
+    runbook: docs/operations/observability-runbook.md
+
+  - id: OBS-ALERT-002
+    execution: manual
+    title: Observability smoke failed
+    severity: warning
+    datasource: smoke-test
+    expr: python scripts/harness/observability/smoke.py --repo-root .
+    for: on-demand
+    summary: Smoke did not confirm traces, logs, and metrics.
+    impact: The telemetry pipeline may be degraded.
+    runbook: docs/operations/observability-runbook.md

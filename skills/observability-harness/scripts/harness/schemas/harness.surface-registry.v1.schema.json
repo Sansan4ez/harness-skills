@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-harness-kit.local/schemas/harness.surface-registry.v1.schema.json",
+  "title": "Harness Surface Registry v1",
+  "type": "object",
+  "required": ["version", "surfaces"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "surfaces": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["implementation_patterns", "required_alignment_patterns"],
+        "properties": {
+          "owner": { "type": "string" },
+          "summary": { "type": "string" },
+          "implementation_patterns": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "ignore_patterns": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "required_alignment_patterns": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "patternProperties": {
+          "^x-": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    "reserved_categories": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["implementation_patterns", "required_alignment_hint"],
+        "properties": {
+          "owner": { "type": "string" },
+          "summary": { "type": "string" },
+          "implementation_patterns": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "ignore_patterns": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "required_alignment_hint": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "patternProperties": {
+          "^x-": {}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}
+

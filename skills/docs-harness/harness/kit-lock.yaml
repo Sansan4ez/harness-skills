@@ -1,0 +1,14 @@
+version: 1
+
+kit:
+  name: repo-harness-kit
+  version: 1.0.0
+
+modules:
+  - docs
+  - traceability
+  - observability
+
+applied_at: "2026-03-13T00:00:00Z"
+
+managed_files: {}

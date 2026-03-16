@@ -1,0 +1,5 @@
+functional_requirements:
+  - id: FR-001
+    title: "Fixture FR"
+    owners: ["fixture"]
+    notes: "Minimal requirement used by harness validation tests."

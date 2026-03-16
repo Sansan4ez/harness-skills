@@ -1,0 +1,96 @@
+version: 1
+
+env_example: .env.example
+
+vars:
+  - name: API_PORT
+    default: "8080"
+    relevance: fixture compose port
+
+  - name: LOG_LEVEL
+    default: INFO
+    relevance: fixture runtime logging
+
+  - name: APP_HEALTH_URL
+    default: http://localhost:8080/healthz
+    relevance: observability smoke target
+
+  - name: SERVICE_NAME
+    default: api
+    relevance: observability smoke service.name probe
+
+  - name: VMALERT_PORT
+    default: "8880"
+    relevance: observability smoke vmalert endpoint
+
+  - name: GRAFANA_PORT
+    default: "3000"
+    relevance: observability smoke grafana endpoint
+    in_env_example: false
+
+  - name: OTEL_COLLECTOR_HEALTH_PORT
+    default: "13133"
+    relevance: observability smoke collector health endpoint
+    in_env_example: false
+
+  - name: VICTORIAMETRICS_PORT
+    default: "8428"
+    relevance: observability smoke metrics backend endpoint
+    in_env_example: false
+
+  - name: VICTORIALOGS_PORT
+    default: "9428"
+    relevance: observability smoke logs backend endpoint
+    in_env_example: false
+
+  - name: VICTORIATRACES_PORT
+    default: "10428"
+    relevance: observability smoke traces backend endpoint
+    in_env_example: false
+
+  - name: OBSERVABILITY_PROJECT_NAME
+    default: repo-harness-observability
+    relevance: observability compose project name
+    in_env_example: false
+
+  - name: OTEL_COLLECTOR_PORT_GRPC
+    default: "4317"
+    relevance: observability collector OTLP gRPC port
+    in_env_example: false
+
+  - name: OTEL_COLLECTOR_PORT_HTTP
+    default: "4318"
+    relevance: observability collector OTLP HTTP port
+    in_env_example: false
+
+  - name: ALERTMANAGER_PORT
+    default: "9093"
+    relevance: observability alertmanager endpoint
+    in_env_example: false
+
+  - name: SMOKE_REPORT_FILE
+    default: ""
+    relevance: observability smoke artifact override
+    in_env_example: false
+
+  - name: SMOKE_HEALTH_TIMEOUT_SECONDS
+    default: "60"
+    relevance: observability smoke wait budget
+    in_env_example: false
+
+  - name: SMOKE_METRIC_SIGNAL
+    default: http_server_duration_milliseconds
+    relevance: observability smoke metric probe
+    in_env_example: false
+
+  - name: SMOKE_LOG_SIGNAL
+    default: HTTP request completed
+    relevance: observability smoke log probe
+    in_env_example: false
+
+  - name: SMOKE_TRACE_SIGNAL
+    default: request
+    relevance: observability smoke trace probe
+    in_env_example: false
+
+ignored: []

@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-harness-kit.local/schemas/harness.observability.signals.v1.schema.json",
+  "title": "Harness Observability Signals Config v1",
+  "type": "object",
+  "required": ["version", "resource_attributes", "signal_kinds", "correlation", "catalog"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "resource_attributes": {
+      "type": "object",
+      "required": ["required"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "signal_kinds": {
+      "type": "object",
+      "required": ["required"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": ["traces", "metrics", "logs"]
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "correlation": {
+      "type": "object",
+      "required": ["required_log_fields"],
+      "properties": {
+        "required_log_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "catalog": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/signal"
+      }
+    }
+  },
+  "$defs": {
+    "signal": {
+      "type": "object",
+      "required": ["name", "kind", "emitter", "consumers", "coverage_paths"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["metric", "log", "trace"]
+        },
+        "service": {
+          "type": "string",
+          "minLength": 1
+        },
+        "emitter": {
+          "type": "object",
+          "required": ["path", "description"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "patternProperties": {
+            "^x-": {}
+          },
+          "additionalProperties": false
+        },
+        "consumers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/consumer"
+          }
+        },
+        "coverage_paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "required": ["path"],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "contains": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                "patternProperties": {
+                  "^x-": {}
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "consumer": {
+      "type": "object",
+      "required": ["kind", "ref"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["dashboard", "alert", "smoke", "runbook", "policy", "baseline"]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

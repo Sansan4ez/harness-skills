@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "harness-skills-repo"
+version = "1.0.0"
+description = "Validation environment for the exported harness skill repository"
+requires-python = ">=3.10, <3.14"
+dependencies = [
+    "jsonschema>=4.23.0",
+    "pytest>=9.0.0",
+    "pytest-asyncio>=1.2.0",
+    "pyyaml>=6.0.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "req(requirement_id): requirement traceability marker",
+]

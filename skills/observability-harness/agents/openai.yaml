@@ -1,0 +1,4 @@
+interface:
+  display_name: "Observability Harness"
+  short_description: "Apply Victoria baseline and smoke checks"
+  default_prompt: "Use $observability-harness to bootstrap, update, or verify observability assets and smoke coverage for this repository."

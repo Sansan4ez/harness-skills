@@ -1,0 +1,16 @@
+version: 1
+
+entrypoint: docs/index.md
+
+domain_indexes:
+  architecture: docs/architecture/index.md
+  operations: docs/operations/index.md
+  requirements: docs/requirements/index.md
+  plans: docs/plans/index.md
+  generated: docs/generated/index.md
+  specs: specs/index.md
+
+generated_dir: docs/generated
+
+rules:
+  require_reachability: true

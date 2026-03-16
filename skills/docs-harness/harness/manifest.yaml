@@ -1,0 +1,9 @@
+version: 1
+services:
+  - id: api
+    kind: fastapi
+    path: .
+    compose_service: api
+    openapi: specs/openapi.yaml
+    otel_service_name: text-bot-adk
+    health_url: http://localhost:8080/healthz

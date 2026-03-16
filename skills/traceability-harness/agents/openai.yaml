@@ -1,0 +1,4 @@
+interface:
+  display_name: "Traceability Harness"
+  short_description: "Enforce OpenAPI and requirement alignment"
+  default_prompt: "Use $traceability-harness to bootstrap, update, or verify requirement traceability and contract coverage for this repository."

@@ -1,0 +1,248 @@
+version: 1
+
+env_example: .env.example
+
+# `vars` is the source of truth for supported environment variables. The docs-harness
+# generator uses it to build `docs/generated/env-matrix.md` and fails if the repo
+# references undocumented variables (unless listed under `ignored`).
+vars:
+  - name: OPENAI_API_KEY
+    default: ""
+    relevance: dev, prod
+
+  - name: SERVE_WEB_INTERFACE
+    default: "true"
+    relevance: dev default; prod overrides to false
+  - name: SESSION_SERVICE_URI
+    default: sqlite+aiosqlite:///./sessions.db
+    relevance: dev, prod
+  - name: PORT
+    default: "8080"
+    relevance: runtime bind port
+  - name: APP_PORT
+    default: "8080"
+    relevance: dev, worktree
+  - name: TEXT_MODEL
+    default: openai/gpt-4o-mini
+    relevance: dev, prod
+  - name: LOG_LEVEL
+    default: INFO
+    relevance: dev, prod
+  - name: MAIN_SKIP_APP_INIT
+    default: "0"
+    relevance: tests only; disables eager app init on import
+
+  - name: PUBLIC_RUN_RATE_LIMIT_PER_MINUTE
+    default: "30"
+    relevance: public runtime guardrails
+  - name: PUBLIC_RUN_SSE_RATE_LIMIT_PER_MINUTE
+    default: "10"
+    relevance: public runtime guardrails
+  - name: PUBLIC_RUN_SSE_CONCURRENCY_LIMIT
+    default: "2"
+    relevance: public runtime guardrails
+  - name: PUBLIC_MAX_REQUEST_BODY_BYTES
+    default: "32768"
+    relevance: public runtime guardrails
+  - name: PUBLIC_MAX_PARTS
+    default: "8"
+    relevance: public runtime guardrails
+  - name: PUBLIC_MAX_TEXT_CHARS
+    default: "4000"
+    relevance: public runtime guardrails
+
+  - name: DATABASE_URL
+    default: postgresql://adk:adk@localhost:5432/adk_kb
+    relevance: dev, prod
+  - name: POSTGRES_USER
+    default: adk
+    relevance: docker local DB
+  - name: POSTGRES_PASSWORD
+    default: adk
+    relevance: docker local DB
+  - name: POSTGRES_DB
+    default: adk_kb
+    relevance: docker local DB
+  - name: POSTGRES_PORT
+    default: "5432"
+    relevance: dev, worktree
+  - name: KNOWLEDGE_BASE_DIR
+    default: knowledge_base
+    relevance: dev, prod seed flow
+
+  - name: DATABASE_URL_TEST
+    default: postgresql://adk:adk@localhost:5433/adk_kb_test
+    relevance: slow DB tests
+  - name: TEST_DATABASE_URL
+    default: ""
+    relevance: slow DB tests override
+  - name: POSTGRES_DB_TEST
+    default: adk_kb_test
+    relevance: slow DB tests
+  - name: POSTGRES_DB_EMPTY
+    default: adk_kb_empty
+    relevance: staging empty-KB target
+  - name: TEST_POSTGRES_PORT
+    default: "5433"
+    relevance: dev, worktree test DB
+  - name: EMPTY_POSTGRES_PORT
+    default: "5434"
+    relevance: dev, staging empty-KB target
+  - name: TEST_DB
+    default: "0"
+    relevance: opt-in slow tests
+
+  - name: COMPOSE_PROJECT_NAME
+    default: adk-bot-db
+    relevance: worktree isolation
+  - name: OBSERVABILITY_PROJECT_NAME
+    default: adk-bot-db-obs
+    relevance: worktree isolation
+  - name: OBSERVABILITY_NETWORK_NAME
+    default: adk-bot-db-obs_default
+    relevance: worktree isolation
+
+  - name: OTEL_SERVICE_NAME
+    default: text-bot-adk
+    relevance: dev, prod, smoke
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    default: http://localhost:4318
+    relevance: dev, prod
+  - name: OTEL_EXPORTER_OTLP_PROTOCOL
+    default: http/protobuf
+    relevance: dev, prod
+  - name: OTEL_METRIC_EXPORT_INTERVAL_MS
+    default: "5000"
+    relevance: dev, prod
+  - name: OTEL_EXPORT_LOGS
+    default: "true"
+    relevance: dev, prod
+  - name: OTEL_EXPORT_METRICS
+    default: "true"
+    relevance: dev, prod
+
+  - name: GRAFANA_PORT
+    default: "3000"
+    relevance: dev, worktree observability
+  - name: VICTORIAMETRICS_PORT
+    default: "8428"
+    relevance: dev, worktree observability
+  - name: VICTORIALOGS_PORT
+    default: "9428"
+    relevance: dev, worktree observability
+  - name: VICTORIATRACES_PORT
+    default: "10428"
+    relevance: dev, worktree observability
+  - name: OTEL_COLLECTOR_PORT_GRPC
+    default: "4317"
+    relevance: dev, worktree observability
+  - name: OTEL_COLLECTOR_PORT_HTTP
+    default: "4318"
+    relevance: dev, worktree observability
+  - name: OTEL_COLLECTOR_HEALTH_PORT
+    default: "13133"
+    relevance: dev, worktree observability
+  - name: ALERTMANAGER_PORT
+    default: "9093"
+    relevance: dev, worktree observability
+  - name: VMALERT_PORT
+    default: "8880"
+    relevance: dev, worktree observability
+
+  - name: APP_HEALTH_URL
+    default: ""
+    relevance: observability smoke only
+  - name: SERVICE_NAME
+    default: text-bot-adk
+    relevance: observability smoke only
+  - name: VMALERT_VERBOSE_SNAPSHOT
+    default: "false"
+    relevance: observability smoke only
+  - name: SMOKE_REPORT_FILE
+    default: ""
+    relevance: observability smoke artifact override
+    in_env_example: false
+  - name: SMOKE_HEALTH_TIMEOUT_SECONDS
+    default: "60"
+    relevance: observability smoke wait budget
+    in_env_example: false
+  - name: SMOKE_METRIC_SIGNAL
+    default: http_server_duration_milliseconds
+    relevance: observability smoke metric probe
+    in_env_example: false
+  - name: SMOKE_LOG_SIGNAL
+    default: HTTP request completed
+    relevance: observability smoke log probe
+    in_env_example: false
+  - name: SMOKE_TRACE_SIGNAL
+    default: request
+    relevance: observability smoke trace probe
+    in_env_example: false
+
+  - name: STAGING_APP_PORT
+    default: "8080"
+    relevance: staging E2E runtime
+  - name: STAGING_DB_FAILURE_PORT
+    default: "8081"
+    relevance: staging E2E DB failure target
+  - name: STAGING_EMPTY_APP_PORT
+    default: "8082"
+    relevance: staging E2E empty-KB target
+  - name: STAGING_BASE_URL
+    default: http://localhost:8080
+    relevance: staging E2E suite
+  - name: STAGING_DB_FAILURE_BASE_URL
+    default: http://localhost:8081
+    relevance: staging E2E suite
+  - name: STAGING_EMPTY_BASE_URL
+    default: http://localhost:8082
+    relevance: staging E2E suite
+  - name: STAGING_APP_NAME
+    default: adk_text_agent
+    relevance: staging E2E suite
+  - name: STAGING_USER_ID
+    default: staging-e2e
+    relevance: staging E2E suite
+  - name: STAGING_TIMEOUT_SECONDS
+    default: "120"
+    relevance: staging E2E suite
+  - name: STAGING_STARTUP_TIMEOUT_SECONDS
+    default: "60"
+    relevance: staging E2E suite
+  - name: STAGING_REPORT_FILE
+    default: artifacts/staging-e2e-report.txt
+    relevance: staging E2E suite
+  - name: STAGING_SESSION_SERVICE_URI
+    default: sqlite+aiosqlite:///./sessions/staging.db
+    relevance: staging E2E runtime
+  - name: STAGING_EMPTY_SESSION_SERVICE_URI
+    default: sqlite+aiosqlite:///./sessions/empty.db
+    relevance: staging E2E runtime
+  - name: STAGING_DB_FAILURE_SESSION_SERVICE_URI
+    default: sqlite+aiosqlite:///./sessions/db-failure.db
+    relevance: staging E2E runtime
+
+  - name: HARNESS_SESSION_SERVICE_URI
+    default: sqlite+aiosqlite:///./sessions/harness.db
+    relevance: uvicorn integration harness only
+  - name: HARNESS_SERVE_WEB_INTERFACE
+    default: "false"
+    relevance: uvicorn integration harness only
+  - name: HARNESS_ADK_WEB_COMPAT_MODE
+    default: "false"
+    relevance: uvicorn integration harness only
+  - name: HARNESS_FAKE_RUNNER_TEXT
+    default: ""
+    relevance: uvicorn integration harness only
+
+# Variables that are allowed to appear in scanning results without being part of the
+# supported surface for this repo (CI/system-provided, or generated-only).
+ignored:
+  - APP_METRIC_PATH
+  - APP_REQUEST_ID
+  - PYTHON_VERSION
+  - REPORT_FILE
+  - ROOT_DIR
+  - UID
+  - VMALERT_ALERTS_DUMP_FILE
+  - VMALERT_RULES_DUMP_FILE

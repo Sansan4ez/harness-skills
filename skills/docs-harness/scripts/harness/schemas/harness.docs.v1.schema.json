@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-harness-kit.local/schemas/harness.docs.v1.schema.json",
+  "title": "Harness Docs Config v1",
+  "type": "object",
+  "required": ["version", "entrypoint", "domain_indexes"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "entrypoint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain_indexes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "generated_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "service_hub_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "c4": {
+      "type": "object",
+      "properties": {
+        "l1": { "type": "string", "minLength": 1 },
+        "l2": { "type": "string", "minLength": 1 },
+        "l3_dir": { "type": "string", "minLength": 1 }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "require_reachability": { "type": "boolean" }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "doc_garden": {
+      "type": "object",
+      "properties": {
+        "historical_globs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "historical_context_keywords": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "asset_reference_globs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

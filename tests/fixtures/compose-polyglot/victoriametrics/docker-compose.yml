@@ -1,0 +1,3 @@
+services:
+  victoriametrics:
+    image: victoriametrics/victoria-metrics

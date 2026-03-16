@@ -1,0 +1,13 @@
+openapi: 3.0.3
+info:
+  title: Fixture Edge API
+  version: 0.0.0
+paths:
+  /healthz:
+    get:
+      operationId: getHealthz
+      summary: Health check
+      x-requirements: ["FR-001"]
+      responses:
+        "200":
+          description: OK

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-harness-kit.local/schemas/harness.manifest.v1.schema.json",
+  "title": "Harness Manifest v1",
+  "type": "object",
+  "required": ["version", "services"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "services": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/service"
+      }
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "service": {
+      "type": "object",
+      "required": ["id", "kind", "path", "compose_service"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,62}$"
+        },
+        "kind": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,62}$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compose_service": {
+          "type": "string",
+          "minLength": 1
+        },
+        "openapi": {
+          "type": "string",
+          "minLength": 1
+        },
+        "otel_service_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "health_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  }
+}

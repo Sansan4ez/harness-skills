@@ -1,0 +1,119 @@
+version: 1
+
+resource_attributes:
+  required:
+    - service.name
+
+signal_kinds:
+  required:
+    - traces
+    - metrics
+    - logs
+
+correlation:
+  required_log_fields:
+    - trace_id
+    - span_id
+    - request_id
+
+catalog:
+  - name: http_server_duration_milliseconds
+    kind: metric
+    service: api
+    emitter:
+      path: src/telemetry.py
+      description: FastAPI request metrics exported through OpenTelemetry.
+    consumers:
+      - kind: dashboard
+        ref: HTTP Throughput
+      - kind: dashboard
+        ref: HTTP 5xx Ratio
+      - kind: dashboard
+        ref: HTTP P95 Latency
+      - kind: alert
+        ref: OBS-ALERT-001
+      - kind: alert
+        ref: OBS-ALERT-002
+      - kind: alert
+        ref: OBS-ALERT-003
+      - kind: smoke
+        ref: victoriametrics/smoke_test.sh
+    coverage_paths:
+      - victoriametrics/alerts/minimum-alerts.yaml
+      - victoriametrics/alerts/vmalert-rules.yaml
+      - path: victoriametrics/grafana/provisioning/dashboards/files/adk-runtime-overview.json
+        contains:
+          - HTTP Throughput
+          - HTTP 5xx Ratio
+      - victoriametrics/smoke_test.sh
+  - name: tool_search_knowledge_base_duration_ms
+    kind: metric
+    service: api
+    emitter:
+      path: src/adk_text_agent/tools.py
+      description: Tool latency histogram for KB calls.
+    consumers:
+      - kind: dashboard
+        ref: KB Tool P95 by Status
+      - kind: dashboard
+        ref: KB Tool Outcomes
+      - kind: alert
+        ref: OBS-ALERT-004
+      - kind: runbook
+        ref: docs/operations/observability-runbook.md
+    coverage_paths:
+      - src/adk_text_agent/tools.py
+      - path: victoriametrics/alerts/minimum-alerts.yaml
+        contains:
+          - OBS-ALERT-004
+      - victoriametrics/alerts/vmalert-rules.yaml
+      - path: victoriametrics/grafana/provisioning/dashboards/files/adk-runtime-overview.json
+        contains: KB Tool Outcomes
+  - name: kb_db_query_duration_ms
+    kind: metric
+    service: api
+    emitter:
+      path: src/db.py
+      description: PostgreSQL hybrid-search query latency histogram.
+    consumers:
+      - kind: dashboard
+        ref: DB Query P95
+      - kind: alert
+        ref: OBS-ALERT-005
+      - kind: runbook
+        ref: docs/operations/observability-runbook.md
+    coverage_paths:
+      - src/db.py
+      - path: victoriametrics/alerts/minimum-alerts.yaml
+        contains:
+          - OBS-ALERT-005
+      - victoriametrics/alerts/vmalert-rules.yaml
+      - path: victoriametrics/grafana/provisioning/dashboards/files/adk-runtime-overview.json
+        contains: DB Query P95
+  - name: HTTP request completed
+    kind: log
+    service: api
+    emitter:
+      path: main.py
+      description: Structured completion log for HTTP requests.
+    consumers:
+      - kind: smoke
+        ref: victoriametrics/smoke_test.sh
+      - kind: runbook
+        ref: docs/operations/observability-runbook.md
+    coverage_paths:
+      - main.py
+      - victoriametrics/smoke_test.sh
+  - name: kb.hybrid_search
+    kind: trace
+    service: api
+    emitter:
+      path: src/db.py
+      description: Trace span for KB hybrid search execution.
+    consumers:
+      - kind: runbook
+        ref: docs/operations/observability-runbook.md
+      - kind: policy
+        ref: docs/operations/observability-policy.md
+    coverage_paths:
+      - src/db.py

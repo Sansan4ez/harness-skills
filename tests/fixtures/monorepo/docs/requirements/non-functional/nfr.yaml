@@ -1,0 +1,5 @@
+non_functional_requirements:
+  - id: NFR-OBS-001
+    title: "Fixture NFR"
+    owners: ["fixture"]
+    notes: "Minimal non-functional requirement used by harness validation tests."

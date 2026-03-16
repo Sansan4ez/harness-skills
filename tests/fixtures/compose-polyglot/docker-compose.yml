@@ -1,0 +1,11 @@
+services:
+  edge-api:
+    image: fixture-api
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      LOG_LEVEL: "${LOG_LEVEL:-INFO}"
+  scheduler:
+    image: fixture-worker
+  admin-ui:
+    image: fixture-admin-ui

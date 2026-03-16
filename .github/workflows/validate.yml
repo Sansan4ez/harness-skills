@@ -1,0 +1,33 @@
+name: Validate Harness Skills
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install repo test runtime
+        run: uv sync
+
+      - name: Install standalone skill runtimes
+        run: |
+          cd skills/docs-harness && uv sync
+          cd ../../skills/traceability-harness && uv sync
+          cd ../../skills/observability-harness && uv sync
+
+      - name: Run export repo tests
+        run: uv run pytest tests -q

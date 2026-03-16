@@ -1,0 +1,15 @@
+groups:
+  - name: harness-fixture
+    interval: 30s
+    rules:
+      - alert: ApiTelemetrySilence
+        expr: sum(rate(http_server_duration_milliseconds_count{service_name="api"}[10m])) < 0.001
+        for: 10m
+        labels:
+          severity: critical
+          alert_id: OBS-ALERT-001
+          service: api
+        annotations:
+          summary: The API service stopped exporting request metrics.
+          impact: Health may still pass while telemetry export is broken.
+          runbook: docs/operations/observability-runbook.md

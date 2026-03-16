@@ -1,0 +1,15 @@
+version: 1
+services:
+  - id: api
+    kind: fastapi
+    path: services/api
+    compose_service: api
+    openapi: specs/api/openapi.yaml
+    otel_service_name: api
+    health_url: http://localhost:8080/healthz
+  - id: worker
+    kind: worker
+    path: services/worker
+    compose_service: worker
+    openapi: specs/worker/openapi.yaml
+    otel_service_name: worker
