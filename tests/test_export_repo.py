@@ -93,7 +93,7 @@ def test_install_keeps_target_repo_clean(tmp_path: Path) -> None:
 
 def test_target_repo_workflows_use_external_checkout() -> None:
     docs_workflow = (
-        ROOT / "skills" / "docs-harness" / "harness" / "templates" / ".github" / "workflows" / "harness-docs.yml"
+        ROOT / "skills" / "docs-harness" / "harness" / "templates" / "workflows" / "harness-docs.yml"
     ).read_text(encoding="utf-8")
     assert "repository: ${{ vars.HARNESS_SKILLS_REPOSITORY }}" in docs_workflow
     assert "working-directory: .skills/harness/skills/docs-harness" in docs_workflow

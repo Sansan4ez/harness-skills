@@ -99,7 +99,7 @@ Required Checks (GitHub Actions Contract)
 Required check names and gating rules are defined in `harness/required-checks.yaml`.
 Validation must work in both contexts:
 
-- in the kit repo against `harness/templates/.github/workflows/**`
+- in the kit repo against `harness/templates/workflows/**`
 - in installed target repos against `.github/workflows/**`
 
 Branch protection should require at least:

@@ -30,17 +30,17 @@ COMMON_MANAGED_MAPPINGS = (("harness/required-checks.yaml", "harness/required-ch
 
 MODULE_MANAGED_MAPPINGS = {
     "docs": (
-        ("harness/templates/.github/workflows/harness-docs.yml", ".github/workflows/harness-docs.yml"),
+        ("harness/templates/workflows/harness-docs.yml", ".github/workflows/harness-docs.yml"),
     ),
     "traceability": (
         (
-            "harness/templates/.github/workflows/harness-traceability.yml",
+            "harness/templates/workflows/harness-traceability.yml",
             ".github/workflows/harness-traceability.yml",
         ),
     ),
     "observability": (
         (
-            "harness/templates/.github/workflows/harness-observability-smoke.yml",
+            "harness/templates/workflows/harness-observability-smoke.yml",
             ".github/workflows/harness-observability-smoke.yml",
         ),
         ("harness/templates/victoriametrics", "victoriametrics"),
