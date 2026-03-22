@@ -11,14 +11,14 @@ Reusable Agent Skills for repository documentation, traceability, and observabil
 ## Install with skills.sh
 
 ```bash
-npx skills add <owner>/harness-skills --list
-npx skills add <owner>/harness-skills --skill docs-harness --skill traceability-harness --skill observability-harness -g -a codex -y
+npx skills add Sansan4ez/harness-skills --list
+npx skills add Sansan4ez/harness-skills --skill docs-harness --skill traceability-harness --skill observability-harness -g -a codex -y
 ```
 
 Project-local install is also supported:
 
 ```bash
-npx skills add <owner>/harness-skills --skill '*' -a codex -y
+npx skills add Sansan4ez/harness-skills --skill '*' -a codex -y
 ```
 
 That installs the skills into the agent-specific project directory, for example `.agents/skills/`.
